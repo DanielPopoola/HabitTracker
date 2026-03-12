@@ -1,6 +1,7 @@
 from django.utils import timezone
 
 from .period import generate_periods
+from habits.models import Completion
 
 
 def compute_streak(habit) -> dict:
@@ -9,7 +10,7 @@ def compute_streak(habit) -> dict:
 	periods = generate_periods(habit.created_at, now, habit.periodicity)
 
 	completion_counts = {
-		row['period_key']: row['count'] for row in habit.completion_set.grouped_by_period(habit)
+		row['period_key']: row['count'] for row in Completion.objects.grouped_by_period(habit)
 	}
 
 	labelled = []
@@ -18,10 +19,10 @@ def compute_streak(habit) -> dict:
 		key = period['key']
 		count = completion_counts.get(key, 0)
 
-		if period['end'] > now:
-			status = 'ACTIVE'
-		elif key in completion_counts:
+		if key in completion_counts:
 			status = 'COMPLETED'
+		elif period['end'] > now:
+			status = 'ACTIVE'
 		else:
 			status = 'FAILED'
 

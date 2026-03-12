@@ -61,7 +61,7 @@ def test_streak_broken_yesterday():
 
 @pytest.mark.django_db
 def test_recovery_after_break():
-    habit = HabitFactory(created_at=midnight(8))
+    habit = HabitFactory(created_at=midnight(9))
 
     for d in [9, 8, 7]:
         make_completion(habit, d)
