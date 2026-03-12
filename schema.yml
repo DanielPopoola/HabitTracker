@@ -195,6 +195,10 @@ paths:
     get:
       operationId: v1_habits_list
       parameters:
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - name: page
         required: false
         in: query
@@ -300,6 +304,8 @@ paths:
         name: id
         schema:
           type: string
+          format: uuid
+        description: A UUID string identifying this habit.
         required: true
       tags:
       - v1
@@ -319,6 +325,8 @@ paths:
         name: id
         schema:
           type: string
+          format: uuid
+        description: A UUID string identifying this habit.
         required: true
       tags:
       - v1
@@ -350,6 +358,8 @@ paths:
         name: id
         schema:
           type: string
+          format: uuid
+        description: A UUID string identifying this habit.
         required: true
       tags:
       - v1
@@ -380,6 +390,8 @@ paths:
         name: id
         schema:
           type: string
+          format: uuid
+        description: A UUID string identifying this habit.
         required: true
       tags:
       - v1
@@ -396,6 +408,8 @@ paths:
         name: id
         schema:
           type: string
+          format: uuid
+        description: A UUID string identifying this habit.
         required: true
       tags:
       - v1
@@ -416,6 +430,8 @@ paths:
         name: id
         schema:
           type: string
+          format: uuid
+        description: A UUID string identifying this habit.
         required: true
       tags:
       - v1
