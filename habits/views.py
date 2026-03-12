@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from drf_spectacular.utils import extend_schema
@@ -22,11 +23,14 @@ from .serializers import (
 )
 
 class HabitViewSet(viewsets.ModelViewSet):
+	queryset = Habit.objects.none()
 	serializer_class = HabitSerializer
 	lookup_field = 'pk'
 	filterset_fields = ['is_archived']
 	
 	def get_queryset(self):
+		if getattr(self, 'swagger_fake_view', False):
+			return Habit.objects.none()
 		return Habit.objects.for_user(self.request.user)
 
 	def get_serializer_class(self):
@@ -96,10 +100,21 @@ class AnalyticsSummaryView(APIView):
 		habits_on_streak = 0
 		habits_broken = 0
 
-		# NOTE: This loops over habits and calls get_analytics per habit (N+1-ish).
-		# Acceptable for v1; optimize with denormalization/query-level aggregates later.
+		completion_counts_by_habit = {}
+		completion_rows = (
+			Completion.objects.filter(habit__user=request.user)
+			.values('habit_id', 'period_key')
+			.annotate(count=Count('id'))
+		)
+
+		for row in completion_rows:
+			habit_counts = completion_counts_by_habit.setdefault(row['habit_id'], {})
+			habit_counts[row['period_key']] = row['count']
+
 		for habit in habits:
-			analytics = habit.get_analytics()
+			analytics = habit.get_analytics_for_counts(
+				completion_counts_by_habit.get(habit.id, {})
+			)
 			if analytics['current_streak'] > 0:
 				habits_on_streak += 1
 			elif analytics['total_failed'] > 0:

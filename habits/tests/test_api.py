@@ -228,6 +228,18 @@ class TestAnalyticsEndpoints:
         assert response.data['habits_on_streak'] == 1
         assert response.data['habits_broken'] == 1
 
+    def test_summary_does_not_call_habit_get_analytics(self, monkeypatch):
+        HabitFactory(user=self.user, created_at=timezone.now() - timedelta(days=1))
+
+        def fail_get_analytics(_self):
+            raise AssertionError('get_analytics should not be called by summary endpoint')
+
+        monkeypatch.setattr(Habit, 'get_analytics', fail_get_analytics)
+
+        response = self.client.get('/api/v1/analytics/summary/')
+
+        assert response.status_code == status.HTTP_200_OK
+
     def test_export_json(self):
         HabitFactory(user=self.user)
 

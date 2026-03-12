@@ -5,14 +5,15 @@ from habits.models import Completion
 from .period import generate_periods
 
 
-def compute_streak(habit) -> dict:
+def compute_streak(habit, completion_counts=None) -> dict:
 	now = timezone.now()
 
 	periods = generate_periods(habit.created_at, now, habit.periodicity)
 
-	completion_counts = {
-		row['period_key']: row['count'] for row in Completion.objects.grouped_by_period(habit)
-	}
+	if completion_counts is None:
+		completion_counts = {
+			row['period_key']: row['count'] for row in Completion.objects.grouped_by_period(habit)
+		}
 
 	labelled = []
 

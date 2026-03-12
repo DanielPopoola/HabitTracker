@@ -34,6 +34,11 @@ class Habit(models.Model):
 
 		return compute_streak(self)
 
+	def get_analytics_for_counts(self, completion_counts):
+		from .services.streak import compute_streak
+
+		return compute_streak(self, completion_counts=completion_counts)
+
 	class Meta:
 		indexes = [
 			models.Index(fields=['user', 'is_archived']),
