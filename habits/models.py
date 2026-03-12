@@ -29,6 +29,10 @@ class Habit(models.Model):
 	def __str__(self):
 		return self.task_specification
 
+	def get_analytics(self):
+		from .services.streak import compute_streak
+		return compute_streak(self)
+
 	class Meta:
 		indexes = [
 			models.Index(fields=['user', 'is_archived']),
