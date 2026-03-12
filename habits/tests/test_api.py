@@ -27,9 +27,10 @@ class TestHabitEndpoints:
         response = self.client.get('/api/v1/habits/')
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]['id'] == str(own_habit.id)
-
+        assert response.data['count'] == 1
+        assert len(response.data['results']) == 1
+        assert response.data['results'][0]['id'] == str(own_habit.id)
+        
     def test_create_habit(self):
         payload = {
             'task_specification': 'Read 10 pages',

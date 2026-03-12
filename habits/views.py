@@ -5,6 +5,7 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dateparse import parse_date
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.renderers import BaseRenderer, JSONRenderer
@@ -20,10 +21,11 @@ from .serializers import (
 	PeriodHistorySerializer,
 )
 
-
 class HabitViewSet(viewsets.ModelViewSet):
 	serializer_class = HabitSerializer
-
+	lookup_field = 'pk'
+	filterset_fields = ['is_archived']
+	
 	def get_queryset(self):
 		return Habit.objects.for_user(self.request.user)
 
@@ -85,6 +87,7 @@ class CompletionViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, views
 
 
 class AnalyticsSummaryView(APIView):
+	@extend_schema(responses=AnalyticsSummarySerializer)
 	def get(self, request):
 		habits = Habit.objects.for_user(request.user, include_archived=True)
 		total_habits = habits.count()
@@ -129,6 +132,7 @@ class CSVRenderer(BaseRenderer):
 class ExportView(APIView):
 	renderer_classes = [JSONRenderer, CSVRenderer]
 
+	@extend_schema(responses={'200': {'type': 'string', 'format': 'binary'}})
 	def get(self, request):
 		format_param = request.query_params.get('format', 'json').lower()
 		habits = Habit.objects.for_user(request.user, include_archived=True)

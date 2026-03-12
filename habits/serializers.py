@@ -1,4 +1,5 @@
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from .models import Completion, Habit
@@ -42,15 +43,19 @@ class HabitDetailSerializer(HabitSerializer):
 			self._analytics_cache[obj.pk] = obj.get_analytics()
 		return self._analytics_cache[obj.pk]
 
+	@extend_schema_field(serializers.IntegerField())
 	def get_current_streak(self, obj):
 		return self._get_analytics(obj)['current_streak']
 
+	@extend_schema_field(serializers.IntegerField())
 	def get_longest_streak(self, obj):
 		return self._get_analytics(obj)['longest_streak']
 
+	@extend_schema_field(serializers.FloatField())
 	def get_completion_rate(self, obj):
 		return self._get_analytics(obj)['completion_rate']
 
+	@extend_schema_field(serializers.BooleanField())
 	def get_is_broken(self, obj):
 		analytics = self._get_analytics(obj)
 		return analytics['current_streak'] == 0 and analytics['total_failed'] > 0

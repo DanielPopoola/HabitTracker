@@ -1,0 +1,593 @@
+openapi: 3.0.3
+info:
+  title: Habit Tracker API
+  version: 1.0.0
+  description: Track and analyze personal habits
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/analytics/export/:
+    get:
+      operationId: v1_analytics_export_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          description: ''
+  /api/v1/analytics/summary/:
+    get:
+      operationId: v1_analytics_summary_retrieve
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsSummary'
+          description: ''
+  /api/v1/habits/:
+    get:
+      operationId: v1_habits_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHabitList'
+          description: ''
+    post:
+      operationId: v1_habits_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Habit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Habit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Habit'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+          description: ''
+  /api/v1/habits/{habit_pk}/completions/:
+    post:
+      operationId: v1_habits_completions_create
+      parameters:
+      - in: path
+        name: habit_pk
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Completion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Completion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Completion'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Completion'
+          description: ''
+  /api/v1/habits/{habit_pk}/completions/{id}/:
+    delete:
+      operationId: v1_habits_completions_destroy
+      parameters:
+      - in: path
+        name: habit_pk
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/habits/{id}/:
+    get:
+      operationId: v1_habits_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HabitDetail'
+          description: ''
+    put:
+      operationId: v1_habits_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Habit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Habit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Habit'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+          description: ''
+    patch:
+      operationId: v1_habits_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHabit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHabit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHabit'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+          description: ''
+    delete:
+      operationId: v1_habits_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/habits/{id}/analytics/:
+    get:
+      operationId: v1_habits_analytics_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+          description: ''
+  /api/v1/habits/{id}/archive/:
+    patch:
+      operationId: v1_habits_archive_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHabit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHabit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHabit'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+          description: ''
+components:
+  schemas:
+    AnalyticsSummary:
+      type: object
+      properties:
+        total_habits:
+          type: integer
+        total_completions:
+          type: integer
+        habits_on_streak:
+          type: integer
+        habits_broken:
+          type: integer
+      required:
+      - habits_broken
+      - habits_on_streak
+      - total_completions
+      - total_habits
+    Completion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+        note:
+          type: string
+          nullable: true
+      required:
+      - id
+    Habit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        task_specification:
+          type: string
+          maxLength: 255
+        periodicity:
+          $ref: '#/components/schemas/PeriodicityEnum'
+        is_archived:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - periodicity
+      - task_specification
+    HabitDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        task_specification:
+          type: string
+          maxLength: 255
+        periodicity:
+          $ref: '#/components/schemas/PeriodicityEnum'
+        is_archived:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        current_streak:
+          type: integer
+          readOnly: true
+        longest_streak:
+          type: integer
+          readOnly: true
+        completion_rate:
+          type: number
+          format: double
+          readOnly: true
+        is_broken:
+          type: boolean
+          readOnly: true
+      required:
+      - completion_rate
+      - created_at
+      - current_streak
+      - id
+      - is_broken
+      - longest_streak
+      - periodicity
+      - task_specification
+    PaginatedHabitList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Habit'
+    PatchedHabit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        task_specification:
+          type: string
+          maxLength: 255
+        periodicity:
+          $ref: '#/components/schemas/PeriodicityEnum'
+        is_archived:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PeriodicityEnum:
+      enum:
+      - DAILY
+      - WEEKLY
+      - MONTHLY
+      type: string
+      description: |-
+        * `DAILY` - Daily
+        * `WEEKLY` - Weekly
+        * `MONTHLY` - Monthly
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
