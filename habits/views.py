@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.renderers import BaseRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -111,7 +112,23 @@ class AnalyticsSummaryView(APIView):
 		return Response(serializer.data)
 
 
+class CSVRenderer(BaseRenderer):
+	media_type = 'text/csv'
+	format = 'csv'
+	charset = 'utf-8'
+	render_style = 'binary'
+
+	def render(self, data, accepted_media_type=None, renderer_context=None):
+		if data is None:
+			return b''
+		if isinstance(data, bytes):
+			return data
+		return str(data).encode(self.charset)
+
+
 class ExportView(APIView):
+	renderer_classes = [JSONRenderer, CSVRenderer]
+
 	def get(self, request):
 		format_param = request.query_params.get('format', 'json').lower()
 		habits = Habit.objects.for_user(request.user, include_archived=True)
