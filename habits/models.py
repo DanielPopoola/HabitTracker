@@ -31,6 +31,7 @@ class Habit(models.Model):
 
 	def get_analytics(self):
 		from .services.streak import compute_streak
+
 		return compute_streak(self)
 
 	class Meta:

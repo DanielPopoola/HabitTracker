@@ -1,5 +1,5 @@
 import calendar
-from datetime import UTC, timedelta, datetime, timezone as dt_timezone
+from datetime import UTC, timedelta
 
 from django.utils import timezone
 

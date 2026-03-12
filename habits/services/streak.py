@@ -1,7 +1,8 @@
 from django.utils import timezone
 
-from .period import generate_periods
 from habits.models import Completion
+
+from .period import generate_periods
 
 
 def compute_streak(habit) -> dict:

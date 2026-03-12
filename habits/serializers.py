@@ -57,6 +57,8 @@ class HabitDetailSerializer(HabitSerializer):
 
 
 class CompletionSerializer(serializers.ModelSerializer):
+	completed_at = serializers.DateTimeField(required=False, default=timezone.now)
+
 	class Meta:
 		model = Completion
 		fields = ['id', 'completed_at', 'note']
