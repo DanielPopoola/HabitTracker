@@ -22,11 +22,14 @@ from .serializers import (
 )
 
 class HabitViewSet(viewsets.ModelViewSet):
+	queryset = Habit.objects.none()
 	serializer_class = HabitSerializer
 	lookup_field = 'pk'
 	filterset_fields = ['is_archived']
 	
 	def get_queryset(self):
+		if getattr(self, 'swagger_fake_view', False):
+			return Habit.objects.none()
 		return Habit.objects.for_user(self.request.user)
 
 	def get_serializer_class(self):
