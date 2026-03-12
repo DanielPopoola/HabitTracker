@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import pytest
 from django.utils import timezone
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -128,7 +129,8 @@ class TestHabitEndpoints:
 
         response = client.get('/api/v1/habits/')
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        # SessionAuthentication + IsAuthenticated returns 403 when no credentials are provided.
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -228,7 +230,7 @@ class TestAnalyticsEndpoints:
     def test_export_json(self):
         HabitFactory(user=self.user)
 
-        response = self.client.get('/api/v1/analytics/export/?format=json')
+        response = self.client.get(f"{reverse('analytics-export')}?format=json")
 
         assert response.status_code == status.HTTP_200_OK
         assert isinstance(response.data, list)
@@ -240,7 +242,7 @@ class TestAnalyticsEndpoints:
     def test_export_csv(self):
         HabitFactory(user=self.user)
 
-        response = self.client.get('/api/v1/analytics/export/?format=csv')
+        response = self.client.get(f"{reverse('analytics-export')}?format=csv")
 
         assert response.status_code == status.HTTP_200_OK
         assert response['Content-Type'].startswith('text/csv')
