@@ -1,0 +1,83 @@
+{% extends "habits/base.html" %}
+
+{% block title %}Dashboard — Habit Tracker{% endblock %}
+
+{% block content %}
+<div class="app">
+
+    <header class="header">
+        <h1 class="header-title">Habit Tracker</h1>
+        <div class="header-actions">
+            <span id="header-username"></span>
+            <button id="btn-export" class="btn-ghost">Export CSV</button>
+            <button id="btn-logout" class="btn-ghost">Logout</button>
+        </div>
+    </header>
+
+    <main class="main">
+
+        <section class="summary-bar" id="summary-bar">
+            <div class="summary-cell">
+                <span class="summary-value" id="summary-total">—</span>
+                <span class="summary-label">Total habits</span>
+            </div>
+            <div class="summary-cell">
+                <span class="summary-value" id="summary-completions">—</span>
+                <span class="summary-label">Completions</span>
+            </div>
+            <div class="summary-cell">
+                <span class="summary-value" id="summary-streaks">—</span>
+                <span class="summary-label">On streak</span>
+            </div>
+            <div class="summary-cell">
+                <span class="summary-value" id="summary-broken">—</span>
+                <span class="summary-label">Broken</span>
+            </div>
+        </section>
+
+        <section id="habit-list-section">
+            <div id="habit-list"></div>
+            <div id="empty-state" class="empty-state hidden">
+                <p>No habits yet.</p>
+                <p>Hit <strong>+</strong> to add your first one.</p>
+            </div>
+        </section>
+
+        <section id="archived-section">
+            <button class="btn-ghost" id="btn-toggle-archived">
+                Show archived habits
+            </button>
+            <div id="archived-list" class="hidden"></div>
+        </section>
+
+    </main>
+
+    <button class="fab" id="btn-add">+</button>
+
+    <!-- Add habit modal -->
+    <div class="modal-overlay hidden" id="modal-add">
+        <div class="modal">
+            <h2>New habit</h2>
+            <div id="modal-error" class="auth-error hidden"></div>
+            <form id="form-add-habit">
+                <input
+                    type="text"
+                    id="input-task"
+                    placeholder="What do you want to do?"
+                    required
+                >
+                <select id="input-periodicity">
+                    <option value="DAILY">Daily</option>
+                    <option value="WEEKLY">Weekly</option>
+                    <option value="MONTHLY">Monthly</option>
+                </select>
+                <div class="modal-actions">
+                    <button type="button" id="btn-modal-cancel" class="btn-ghost">Cancel</button>
+                    <button type="submit">Add habit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

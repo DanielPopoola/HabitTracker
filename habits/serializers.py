@@ -6,6 +6,22 @@ from .models import Completion, Habit
 from .services.period import get_period_key
 
 
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+
+class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    email = serializers.EmailField()
+
 class HabitSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Habit

@@ -136,6 +136,8 @@ REST_FRAMEWORK = {
 	],
 }
 
+CSRF_COOKIE_HTTPONLY = False
+
 SPECTACULAR_SETTINGS = {
 	'TITLE': 'Habit Tracker API',
 	'DESCRIPTION': 'Track and analyze personal habits',
