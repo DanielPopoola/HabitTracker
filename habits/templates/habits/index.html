@@ -14,6 +14,11 @@
         </div>
     </header>
 
+    <div id="error-banner" class="error-banner hidden">
+        <span id="error-banner-message"></span>
+        <button id="btn-dismiss-error" class="btn-error-dismiss" aria-label="Dismiss error">×</button>
+    </div>
+
     <main class="main">
 
         <section class="summary-bar" id="summary-bar">
@@ -52,9 +57,16 @@
 
     </main>
 
+    <aside id="detail-panel" class="detail-panel hidden" aria-live="polite">
+        <div class="detail-panel-header">
+            <h3>Habit detail</h3>
+            <button id="btn-close-detail" class="btn-ghost">Close</button>
+        </div>
+        <div id="detail-panel-content"></div>
+    </aside>
+
     <button class="fab" id="btn-add">+</button>
 
-    <!-- Add habit modal -->
     <div class="modal-overlay hidden" id="modal-add">
         <div class="modal">
             <h2>New habit</h2>
