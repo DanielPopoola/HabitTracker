@@ -67,7 +67,7 @@ async function renderHabitList() {
 
 function skeletonCard() {
     return `
-        <div class="habit-card">
+        <div class="habit-card rounded-xl border border-white/15 bg-slate-900/70 p-4 shadow-lg backdrop-blur">
             <div class="skeleton skeleton-line"></div>
             <div class="skeleton skeleton-line short"></div>
             <div class="skeleton-dots">${'<span class="skeleton skeleton-dot"></span>'.repeat(18)}</div>
@@ -93,20 +93,20 @@ function habitCard(habit, periods = []) {
 
     const isEditing = state.editingHabitId === habit.id;
     const taskMarkup = isEditing
-        ? `<input class="habit-task-input" data-id="${habit.id}" value="${escapeHtml(state.editDraft || habit.task_specification)}">`
-        : `<span class="habit-task">${escapeHtml(habit.task_specification)}</span>`;
+        ? `<input class="habit-task-input w-full rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 text-slate-100" data-id="${habit.id}" value="${escapeHtml(state.editDraft || habit.task_specification)}">`
+        : `<span class="habit-task text-base font-semibold text-white">${escapeHtml(habit.task_specification)}</span>`;
 
     return `
-        <div class="habit-card clickable" data-id="${habit.id}">
-            <div class="habit-card-header">
+        <div class="habit-card clickable mb-3 rounded-xl border border-white/15 bg-slate-900/70 p-4 shadow-lg backdrop-blur" data-id="${habit.id}">
+            <div class="habit-card-header mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 ${taskMarkup}
-                <span class="habit-periodicity">${habit.periodicity}</span>
+                <span class="habit-periodicity inline-flex w-fit rounded-full bg-brand-500/20 px-2 py-1 text-xs font-semibold text-indigo-200">${habit.periodicity}</span>
             </div>
             <div class="habit-dots">${dots}</div>
-            <div class="habit-card-footer">
-                <button class="btn-done" data-action="done" data-id="${habit.id}" ${doneBusy ? 'disabled' : ''}>${doneBusy ? 'Saving...' : '✓ Done'}</button>
-                <button class="btn-archive" data-action="archive" data-id="${habit.id}" ${archiveBusy ? 'disabled' : ''}>${archiveBusy ? 'Archiving...' : 'Archive'}</button>
-                <button class="btn-edit" data-action="edit" data-id="${habit.id}">${isEditing ? 'Editing...' : 'Edit'}</button>
+            <div class="habit-card-footer flex flex-col gap-2 sm:flex-row">
+                <button class="btn-done rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60" data-action="done" data-id="${habit.id}" ${doneBusy ? 'disabled' : ''}>${doneBusy ? 'Saving...' : '✓ Done'}</button>
+                <button class="btn-archive rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800 disabled:opacity-60" data-action="archive" data-id="${habit.id}" ${archiveBusy ? 'disabled' : ''}>${archiveBusy ? 'Archiving...' : 'Archive'}</button>
+                <button class="btn-edit rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800" data-action="edit" data-id="${habit.id}">${isEditing ? 'Editing...' : 'Edit'}</button>
             </div>
         </div>
     `;
@@ -115,13 +115,13 @@ function habitCard(habit, periods = []) {
 function archivedCard(habit) {
     const unarchiveBusy = isActionInFlight('unarchive', habit.id);
     return `
-        <div class="habit-card habit-card-archived" data-id="${habit.id}">
-            <div class="habit-card-header">
-                <span class="habit-task">${escapeHtml(habit.task_specification)}</span>
-                <span class="habit-periodicity">${habit.periodicity}</span>
+        <div class="habit-card habit-card-archived mb-3 rounded-xl border border-white/15 bg-slate-900/70 p-4 shadow-lg" data-id="${habit.id}">
+            <div class="habit-card-header mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span class="habit-task font-medium text-slate-100">${escapeHtml(habit.task_specification)}</span>
+                <span class="habit-periodicity inline-flex w-fit rounded-full bg-slate-700/80 px-2 py-1 text-xs font-semibold text-slate-200">${habit.periodicity}</span>
             </div>
-            <div class="habit-card-footer">
-                <button class="btn-unarchive" data-action="unarchive" data-id="${habit.id}" ${unarchiveBusy ? 'disabled' : ''}>${unarchiveBusy ? '...' : 'Unarchive'}</button>
+            <div class="habit-card-footer flex">
+                <button class="btn-unarchive rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800 disabled:opacity-60" data-action="unarchive" data-id="${habit.id}" ${unarchiveBusy ? 'disabled' : ''}>${unarchiveBusy ? '...' : 'Unarchive'}</button>
             </div>
         </div>
     `;
@@ -161,32 +161,32 @@ function renderDetailPanel() {
     }
 
     const periods = (selected.periods || []).map(period => `
-        <div class="detail-period-item">
+        <div class="detail-period-item flex items-center justify-between rounded-lg border border-white/15 bg-slate-800/80 px-3 py-2 text-sm text-slate-200">
             <span>${period.key}</span>
             <span>${period.status}</span>
         </div>
-    `).join('') || '<p>No period history in this range.</p>';
+    `).join('') || '<p class="text-slate-300">No period history in this range.</p>';
 
     content.innerHTML = `
         <h4>${escapeHtml(selected.task_specification || '')}</h4>
         <p>${selected.periodicity}</p>
 
-        <div class="detail-stats">
-            <div class="detail-stat"><strong>${completionRateValue(selected)}</strong><br>rate</div>
-            <div class="detail-stat"><strong>${selected.current_streak ?? 0}</strong><br>current</div>
-            <div class="detail-stat"><strong>${selected.longest_streak ?? 0}</strong><br>longest</div>
+        <div class="detail-stats mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div class="detail-stat rounded-lg border border-white/15 bg-slate-800/80 p-2 text-center text-slate-200"><strong>${completionRateValue(selected)}</strong><br>rate</div>
+            <div class="detail-stat rounded-lg border border-white/15 bg-slate-800/80 p-2 text-center text-slate-200"><strong>${selected.current_streak ?? 0}</strong><br>current</div>
+            <div class="detail-stat rounded-lg border border-white/15 bg-slate-800/80 p-2 text-center text-slate-200"><strong>${selected.longest_streak ?? 0}</strong><br>longest</div>
         </div>
 
-        <div class="detail-filter">
-            <input id="detail-start" type="date" value="${selected.start || ''}">
-            <input id="detail-end" type="date" value="${selected.end || ''}">
+        <div class="detail-filter mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <input id="detail-start" class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100" type="date" value="${selected.start || ''}">
+            <input id="detail-end" class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100" type="date" value="${selected.end || ''}">
         </div>
-        <div class="detail-filter-actions">
-            <button class="btn-ghost" id="btn-apply-filter">Apply</button>
-            <button class="btn-ghost" id="btn-clear-filter">Clear</button>
+        <div class="detail-filter-actions mb-4 flex flex-col gap-2 sm:flex-row">
+            <button class="btn-ghost rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800" id="btn-apply-filter">Apply</button>
+            <button class="btn-ghost rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800" id="btn-clear-filter">Clear</button>
         </div>
 
-        <div class="detail-period-list">${periods}</div>
+        <div class="detail-period-list flex flex-col gap-2">${periods}</div>
     `;
 }
 

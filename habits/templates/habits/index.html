@@ -3,53 +3,55 @@
 {% block title %}Dashboard — Habit Tracker{% endblock %}
 
 {% block content %}
-<div class="app">
+<div class="app min-h-screen">
 
-    <header class="header">
-        <h1 class="header-title">Habit Tracker</h1>
-        <div class="header-actions">
-            <span id="header-username"></span>
-            <button id="btn-export" class="btn-ghost">Export CSV</button>
-            <button id="btn-logout" class="btn-ghost">Logout</button>
+    <header class="header sticky top-0 z-20 border-b border-white/15 bg-slate-900/80 px-4 py-4 backdrop-blur md:px-6">
+        <div class="mx-auto flex w-full max-w-5xl flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <h1 class="header-title text-2xl font-bold text-white">Habit Tracker</h1>
+            <div class="header-actions flex flex-wrap items-center gap-2">
+                <span id="header-username" class="rounded-full bg-slate-800/80 px-3 py-1 text-sm text-slate-200"></span>
+                <button id="btn-export" class="btn-ghost rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800">Export CSV</button>
+                <button id="btn-logout" class="btn-ghost rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800">Logout</button>
+            </div>
         </div>
     </header>
 
-    <div id="error-banner" class="error-banner hidden">
+    <div id="error-banner" class="error-banner hidden mx-auto mt-4 flex w-[min(100%-2rem,900px)] items-center justify-between gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-100">
         <span id="error-banner-message"></span>
-        <button id="btn-dismiss-error" class="btn-error-dismiss" aria-label="Dismiss error">×</button>
+        <button id="btn-dismiss-error" class="btn-error-dismiss text-xl leading-none" aria-label="Dismiss error">×</button>
     </div>
 
-    <main class="main">
+    <main class="main mx-auto w-full max-w-5xl px-4 py-6 md:px-6">
 
-        <section class="summary-bar" id="summary-bar">
-            <div class="summary-cell">
-                <span class="summary-value" id="summary-total">—</span>
-                <span class="summary-label">Total habits</span>
+        <section class="summary-bar grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" id="summary-bar">
+            <div class="summary-cell rounded-xl border border-white/15 bg-slate-900/70 p-4 text-center shadow-lg backdrop-blur">
+                <span class="summary-value block text-3xl font-bold text-white" id="summary-total">—</span>
+                <span class="summary-label text-xs uppercase tracking-wide text-slate-300">Total habits</span>
             </div>
-            <div class="summary-cell">
-                <span class="summary-value" id="summary-completions">—</span>
-                <span class="summary-label">Completions</span>
+            <div class="summary-cell rounded-xl border border-white/15 bg-slate-900/70 p-4 text-center shadow-lg backdrop-blur">
+                <span class="summary-value block text-3xl font-bold text-white" id="summary-completions">—</span>
+                <span class="summary-label text-xs uppercase tracking-wide text-slate-300">Completions</span>
             </div>
-            <div class="summary-cell">
-                <span class="summary-value" id="summary-streaks">—</span>
-                <span class="summary-label">On streak</span>
+            <div class="summary-cell rounded-xl border border-white/15 bg-slate-900/70 p-4 text-center shadow-lg backdrop-blur">
+                <span class="summary-value block text-3xl font-bold text-white" id="summary-streaks">—</span>
+                <span class="summary-label text-xs uppercase tracking-wide text-slate-300">On streak</span>
             </div>
-            <div class="summary-cell">
-                <span class="summary-value" id="summary-broken">—</span>
-                <span class="summary-label">Broken</span>
+            <div class="summary-cell rounded-xl border border-white/15 bg-slate-900/70 p-4 text-center shadow-lg backdrop-blur">
+                <span class="summary-value block text-3xl font-bold text-white" id="summary-broken">—</span>
+                <span class="summary-label text-xs uppercase tracking-wide text-slate-300">Broken</span>
             </div>
         </section>
 
-        <section id="habit-list-section">
+        <section id="habit-list-section" class="mt-4">
             <div id="habit-list"></div>
-            <div id="empty-state" class="empty-state hidden">
+            <div id="empty-state" class="empty-state hidden rounded-xl border border-dashed border-slate-600 bg-slate-900/50 p-10 text-center text-slate-300">
                 <p>No habits yet.</p>
                 <p>Hit <strong>+</strong> to add your first one.</p>
             </div>
         </section>
 
-        <section id="archived-section">
-            <button class="btn-ghost" id="btn-toggle-archived">
+        <section id="archived-section" class="mt-8 space-y-4">
+            <button class="btn-ghost rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800" id="btn-toggle-archived">
                 Show archived habits
             </button>
             <div id="archived-list" class="hidden"></div>
@@ -57,35 +59,36 @@
 
     </main>
 
-    <aside id="detail-panel" class="detail-panel hidden" aria-live="polite">
-        <div class="detail-panel-header">
-            <h3>Habit detail</h3>
-            <button id="btn-close-detail" class="btn-ghost">Close</button>
+    <aside id="detail-panel" class="detail-panel hidden fixed right-0 top-0 z-50 h-screen w-full max-w-md overflow-y-auto border-l border-white/20 bg-slate-900/95 p-4 shadow-2xl">
+        <div class="detail-panel-header mb-4 flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-white">Habit detail</h3>
+            <button id="btn-close-detail" class="btn-ghost rounded-lg border border-slate-500/60 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800">Close</button>
         </div>
         <div id="detail-panel-content"></div>
     </aside>
 
-    <button class="fab" id="btn-add">+</button>
+    <button class="fab fixed bottom-5 right-5 h-14 w-14 rounded-full bg-brand-600 text-3xl text-white shadow-2xl transition hover:bg-brand-700" id="btn-add">+</button>
 
-    <div class="modal-overlay hidden" id="modal-add">
-        <div class="modal">
-            <h2>New habit</h2>
-            <div id="modal-error" class="auth-error hidden"></div>
-            <form id="form-add-habit">
+    <div class="modal-overlay hidden fixed inset-0 z-[100] flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" id="modal-add">
+        <div class="modal w-full rounded-t-2xl border border-white/15 bg-slate-900 p-4 sm:max-w-md sm:rounded-2xl sm:p-6">
+            <h2 class="text-xl font-semibold text-white">New habit</h2>
+            <div id="modal-error" class="auth-error hidden rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"></div>
+            <form id="form-add-habit" class="space-y-3">
                 <input
                     type="text"
                     id="input-task"
+                    class="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-400"
                     placeholder="What do you want to do?"
                     required
                 >
-                <select id="input-periodicity">
+                <select id="input-periodicity" class="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100">
                     <option value="DAILY">Daily</option>
                     <option value="WEEKLY">Weekly</option>
                     <option value="MONTHLY">Monthly</option>
                 </select>
-                <div class="modal-actions">
-                    <button type="button" id="btn-modal-cancel" class="btn-ghost">Cancel</button>
-                    <button type="submit">Add habit</button>
+                <div class="modal-actions flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <button type="button" id="btn-modal-cancel" class="btn-ghost rounded-lg border border-slate-500/60 px-4 py-2 text-sm text-slate-100 hover:bg-slate-800">Cancel</button>
+                    <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Add habit</button>
                 </div>
             </form>
         </div>

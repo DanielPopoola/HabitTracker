@@ -5,10 +5,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Habit Tracker{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="{% static 'habits/css/styles.css' %}">
 </head>
-<body>
+<body class="relative min-h-screen bg-slate-950 text-slate-100">
+    <div id="particles-js" class="fixed inset-0 -z-10"></div>
     {% block content %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        if (window.particlesJS) {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 60, density: { enable: true, value_area: 900 } },
+                    color: { value: '#818cf8' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.35 },
+                    size: { value: 3, random: true },
+                    line_linked: { enable: true, distance: 140, color: '#6366f1', opacity: 0.25, width: 1 },
+                    move: { enable: true, speed: 1.4 }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: { onhover: { enable: true, mode: 'grab' }, resize: true },
+                    modes: { grab: { distance: 140, line_linked: { opacity: 0.45 } } }
+                },
+                retina_detect: true
+            });
+        }
+    </script>
 
     <script src="{% static 'habits/js/api.js' %}"></script>
     <script src="{% static 'habits/js/state.js' %}"></script>
