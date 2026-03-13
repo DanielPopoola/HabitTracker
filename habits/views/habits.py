@@ -25,7 +25,9 @@ class HabitViewSet(viewsets.ModelViewSet):
 	def get_queryset(self):
 		if getattr(self, 'swagger_fake_view', False):
 			return Habit.objects.none()
-		return Habit.objects.for_user(self.request.user)
+		# Include archived records so detail actions (e.g. unarchive) can resolve the habit.
+		# List endpoints can still narrow with the `is_archived` filter query parameter.
+		return Habit.objects.for_user(self.request.user, include_archived=True)
 
 	def get_serializer_class(self):
 		if self.action == 'retrieve':
