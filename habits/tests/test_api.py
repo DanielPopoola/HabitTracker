@@ -115,6 +115,16 @@ class TestHabitEndpoints:
         assert response.data['is_archived'] is True
         assert habit.is_archived is True
 
+    def test_unarchive_habit(self):
+        habit = HabitFactory(user=self.user, is_archived=True)
+
+        response = self.client.patch(f'/api/v1/habits/{habit.id}/unarchive/')
+
+        habit.refresh_from_db()
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['is_archived'] is False
+        assert habit.is_archived is False
+
     def test_analytics_action_returns_periods(self):
         habit = HabitFactory(user=self.user)
 
